@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  TEACHER
+  STUDENT
+}
+
+enum DeviceType {
+  LIGHT
+  PROJECTOR
+  FAN
+}
+
+enum DeviceStatus {
+  ON
+  OFF
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+
+  createdAt DateTime @default(now())
+
+  sessions  QRSession[]
+}
+
+model Classroom {
+  id          Int      @id @default(autoincrement())
+  name        String
+  qrCode      String   @unique
+
+  devices     Device[]
+  sessions    QRSession[]
+}
+
+model Device {
+  id           Int           @id @default(autoincrement())
+  name         String
+
+  type         DeviceType
+  status       DeviceStatus @default(OFF)
+
+  classroomId  Int
+  classroom    Classroom @relation(fields: [classroomId], references: [id])
+}
+
+model QRSession {
+  id            Int       @id @default(autoincrement())
+
+  userId        Int
+  classroomId   Int
+
+  entryTime     DateTime @default(now())
+
+  user          User @relation(fields: [userId], references: [id])
+  classroom     Classroom @relation(fields: [classroomId], references: [id])
+}
