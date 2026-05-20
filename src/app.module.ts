@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ClassroomsModule } from './classrooms/classrooms.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { DevicesModule } from './devices/devices.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { QRModule } from './qr/qr.module';
@@ -18,6 +19,7 @@ import { WebsocketModule } from './websocket/websocket.module';
     ClassroomsModule,
     DevicesModule,
     QRModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
