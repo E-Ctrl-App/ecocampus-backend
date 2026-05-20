@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ClassroomsModule } from './classrooms/classrooms.module';
 import { DevicesModule } from './devices/devices.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { QRModule } from './qr/qr.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
     AuthModule,
     ClassroomsModule,
     DevicesModule,
+    QRModule,
   ],
   controllers: [AppController],
   providers: [AppService],
