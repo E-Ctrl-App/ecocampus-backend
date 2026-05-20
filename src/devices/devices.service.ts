@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DeviceStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { WebsocketGateway } from '../websocket/websocket.gateway';
 import { CreateDeviceDto } from './dto/create-device.dto';
 
 @Injectable()
 export class DevicesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly websocketGateway: WebsocketGateway,
+  ) {}
 
   async create(createDeviceDto: CreateDeviceDto) {
     const classroom = await this.prisma.classroom.findUnique({
@@ -50,9 +54,19 @@ export class DevicesService {
     const nextStatus =
       device.status === DeviceStatus.ON ? DeviceStatus.OFF : DeviceStatus.ON;
 
-    return this.prisma.device.update({
+    const updatedDevice = await this.prisma.device.update({
       where: { id },
       data: { status: nextStatus },
     });
+
+    this.websocketGateway.emitDeviceUpdated({
+      deviceId: updatedDevice.id,
+      name: updatedDevice.name,
+      type: updatedDevice.type,
+      status: updatedDevice.status,
+      classroomId: updatedDevice.classroomId,
+    });
+
+    return updatedDevice;
   }
 }

@@ -2,11 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DeviceType, Role } from '@prisma/client';
 import { AuthUser } from '../auth/types/auth-user.type';
 import { PrismaService } from '../prisma/prisma.service';
+import { WebsocketGateway } from '../websocket/websocket.gateway';
 import { ScanQrDto } from './dto/scan-qr.dto';
 
 @Injectable()
 export class QRService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly websocketGateway: WebsocketGateway,
+  ) {}
 
   async scan(scanQrDto: ScanQrDto, user: AuthUser) {
     const classroom = await this.prisma.classroom.findUnique({
@@ -27,6 +31,12 @@ export class QRService {
         userId: user.id,
         classroomId: classroom.id,
       },
+    });
+
+    this.websocketGateway.emitQrScanned({
+      classroomId: classroom.id,
+      classroomName: classroom.name,
+      userRole: user.role,
     });
 
     return {
