@@ -1,98 +1,899 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# EcoCampus Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend para EcoCampus, un sistema de control inteligente de aulas donde usuarios con rol `TEACHER` o `STUDENT` escanean el QR de un salón, consultan dispositivos disponibles y controlan luces, ventiladores y proyector según sus permisos.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+El proyecto está construido con NestJS, Prisma 7, PostgreSQL, JWT y Socket.IO.
 
-## Description
+## Características
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Autenticación con JWT.
+- Registro y login de usuarios.
+- Roles básicos: `TEACHER` y `STUDENT`.
+- CRUD básico de salones.
+- CRUD básico de dispositivos.
+- Escaneo de QR para acceder a dispositivos de un aula.
+- Registro de sesiones QR.
+- Permisos calculados por rol al escanear QR.
+- Eventos en tiempo real con Socket.IO.
+- Dashboard con métricas simuladas de consumo, ahorro y actividad.
+- PostgreSQL con Docker Compose.
 
-## Project setup
+## Stack
 
-```bash
-$ npm install
-```
+- Node.js
+- NestJS 11
+- Prisma 7
+- PostgreSQL 16
+- Socket.IO
+- Passport JWT
+- bcrypt
+- class-validator
+- Docker Compose
 
-## Compile and run the project
+## Requisitos
 
-```bash
-# development
-$ npm run start
+Instala antes de correr el proyecto:
 
-# watch mode
-$ npm run start:dev
+- Node.js 20 o superior
+- npm
+- Docker Desktop
+- Docker Compose
 
-# production mode
-$ npm run start:prod
-```
+## Instalación
 
-## Run tests
+Clona el repositorio e instala dependencias:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
+## Variables de Entorno
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Crea un archivo `.env` en la raíz del proyecto.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Ejemplo:
+
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/ecocampus"
+JWT_SECRET="super-secret-dev-key"
+PORT=3000
+```
+
+Notas:
+
+- `DATABASE_URL` debe coincidir con los valores de `docker-compose.yml`.
+- `JWT_SECRET` se usa para firmar y validar tokens JWT.
+- `PORT` es opcional. Si no se define, Nest usa `3000`.
+
+## Base de Datos con Docker
+
+Levanta PostgreSQL:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Verifica que el contenedor esté corriendo:
 
-## Resources
+```bash
+docker ps
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+El servicio incluido usa:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```txt
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_DB=ecocampus
+PORT=5432
+```
 
-## Support
+## Prisma
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Genera el cliente de Prisma:
 
-## Stay in touch
+```bash
+npx prisma generate
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Ejecuta migraciones:
 
-## License
+```bash
+npx prisma migrate dev
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Abrir Prisma Studio:
+
+```bash
+npx prisma studio
+```
+
+Nota sobre Prisma 7:
+
+Este proyecto usa `@prisma/adapter-pg` para PostgreSQL. El `PrismaService` construye el cliente con el adapter requerido por Prisma 7.
+
+## Correr el Proyecto
+
+Modo desarrollo con watch:
+
+```bash
+npm run start:dev
+```
+
+Modo normal:
+
+```bash
+npm run start
+```
+
+Modo producción:
+
+```bash
+npm run build
+npm run start:prod
+```
+
+Servidor por defecto:
+
+```txt
+http://localhost:3000
+```
+
+Si el puerto está ocupado:
+
+```bash
+PORT=3001 npm run start:dev
+```
+
+## Scripts Disponibles
+
+```bash
+npm run build
+npm run format
+npm run start
+npm run start:dev
+npm run start:prod
+npm run test
+npm run test:e2e
+npm run test:cov
+```
+
+## Modelos Principales
+
+### User
+
+- `id`
+- `name`
+- `email`
+- `password`
+- `role`
+- `createdAt`
+
+### Classroom
+
+- `id`
+- `name`
+- `qrCode`
+
+### Device
+
+- `id`
+- `name`
+- `type`
+- `status`
+- `classroomId`
+
+### QRSession
+
+- `id`
+- `userId`
+- `classroomId`
+- `entryTime`
+
+## Enums
+
+```ts
+Role = 'TEACHER' | 'STUDENT'
+DeviceType = 'LIGHT' | 'PROJECTOR' | 'FAN'
+DeviceStatus = 'ON' | 'OFF'
+```
+
+## Autenticación
+
+### Registrar Usuario
+
+```txt
+POST /auth/register
+```
+
+Body:
+
+```json
+{
+  "name": "Ana Profesora",
+  "email": "ana@ecocampus.com",
+  "password": "123456",
+  "role": "TEACHER"
+}
+```
+
+Respuesta:
+
+```json
+{
+  "id": 1,
+  "name": "Ana Profesora",
+  "email": "ana@ecocampus.com",
+  "role": "TEACHER",
+  "createdAt": "2026-05-20T00:00:00.000Z"
+}
+```
+
+Errores:
+
+- `409 Conflict`: email ya registrado.
+- `400 Bad Request`: body inválido.
+
+### Login
+
+```txt
+POST /auth/login
+```
+
+Body:
+
+```json
+{
+  "email": "ana@ecocampus.com",
+  "password": "123456"
+}
+```
+
+Respuesta:
+
+```json
+{
+  "accessToken": "JWT_TOKEN",
+  "user": {
+    "id": 1,
+    "name": "Ana Profesora",
+    "email": "ana@ecocampus.com",
+    "role": "TEACHER"
+  }
+}
+```
+
+El payload del JWT incluye:
+
+```json
+{
+  "sub": 1,
+  "email": "ana@ecocampus.com",
+  "role": "TEACHER"
+}
+```
+
+## Headers para Endpoints Protegidos
+
+```txt
+Authorization: Bearer JWT_TOKEN
+Content-Type: application/json
+```
+
+## Salones
+
+### Crear Salón
+
+```txt
+POST /classrooms
+```
+
+Body:
+
+```json
+{
+  "name": "A-201",
+  "qrCode": "ROOM_A201"
+}
+```
+
+Errores:
+
+- `409 Conflict`: QR duplicado.
+
+### Listar Salones
+
+```txt
+GET /classrooms
+```
+
+### Obtener Salón con Dispositivos
+
+```txt
+GET /classrooms/:id
+```
+
+Ejemplo:
+
+```txt
+GET /classrooms/1
+```
+
+Errores:
+
+- `404 Not Found`: salón no encontrado.
+
+## Dispositivos
+
+### Crear Dispositivo
+
+```txt
+POST /devices
+```
+
+Body:
+
+```json
+{
+  "name": "Luces",
+  "type": "LIGHT",
+  "classroomId": 1
+}
+```
+
+Tipos válidos:
+
+```txt
+LIGHT
+PROJECTOR
+FAN
+```
+
+Errores:
+
+- `404 Not Found`: salón no encontrado.
+
+### Listar Dispositivos
+
+```txt
+GET /devices
+```
+
+### Obtener Dispositivo
+
+```txt
+GET /devices/:id
+```
+
+### Encender o Apagar Dispositivo
+
+```txt
+PATCH /devices/:id/toggle
+```
+
+Ejemplo:
+
+```txt
+PATCH /devices/1/toggle
+```
+
+No requiere body.
+
+Respuesta:
+
+```json
+{
+  "id": 1,
+  "name": "Luces",
+  "type": "LIGHT",
+  "status": "ON",
+  "classroomId": 1
+}
+```
+
+Al ejecutar este endpoint se emite el evento WebSocket `device.updated`.
+
+Nota actual:
+
+El backend todavía no aplica permisos por rol en este endpoint. La restricción por rol se calcula en el flujo QR mediante la propiedad `allowed`.
+
+## QR
+
+### Escanear QR
+
+```txt
+POST /qr/scan
+```
+
+Requiere JWT.
+
+Body:
+
+```json
+{
+  "qrCode": "ROOM_A201"
+}
+```
+
+Respuesta para `TEACHER`:
+
+```json
+{
+  "classroom": {
+    "id": 1,
+    "name": "A-201"
+  },
+  "devices": [
+    {
+      "id": 1,
+      "name": "Luces",
+      "type": "LIGHT",
+      "status": "OFF",
+      "allowed": true
+    },
+    {
+      "id": 2,
+      "name": "Proyector",
+      "type": "PROJECTOR",
+      "status": "OFF",
+      "allowed": true
+    }
+  ]
+}
+```
+
+Respuesta para `STUDENT`:
+
+```json
+{
+  "classroom": {
+    "id": 1,
+    "name": "A-201"
+  },
+  "devices": [
+    {
+      "id": 1,
+      "name": "Luces",
+      "type": "LIGHT",
+      "status": "OFF",
+      "allowed": true
+    },
+    {
+      "id": 2,
+      "name": "Proyector",
+      "type": "PROJECTOR",
+      "status": "OFF",
+      "allowed": false
+    }
+  ]
+}
+```
+
+Reglas:
+
+- `TEACHER`: puede controlar `LIGHT`, `PROJECTOR` y `FAN`.
+- `STUDENT`: solo puede controlar `LIGHT`.
+
+Al escanear QR:
+
+- Se busca el salón por `qrCode`.
+- Se registra una nueva `QRSession`.
+- Se devuelven dispositivos con `allowed`.
+- Se emite el evento WebSocket `qr.scanned`.
+
+Errores:
+
+- `401 Unauthorized`: token ausente o inválido.
+- `404 Not Found`: QR inválido o salón no encontrado.
+
+## Dashboard y Analytics
+
+### Resumen
+
+```txt
+GET /dashboard/summary
+```
+
+Respuesta:
+
+```json
+{
+  "activeClassrooms": 3,
+  "devicesOn": 8,
+  "totalDevices": 15,
+  "activeSessions": 5,
+  "estimatedConsumption": 24.5,
+  "estimatedSavings": 12.2
+}
+```
+
+Reglas de consumo simulado:
+
+```txt
+LIGHT ON = 0.3 kWh
+FAN ON = 0.5 kWh
+PROJECTOR ON = 0.8 kWh
+```
+
+### Salones para Dashboard
+
+```txt
+GET /dashboard/classrooms
+```
+
+Respuesta:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "A-201",
+    "devicesOn": 2,
+    "totalDevices": 3,
+    "status": "ACTIVE"
+  }
+]
+```
+
+### Dispositivos Agrupados por Salón
+
+```txt
+GET /dashboard/devices
+```
+
+Respuesta:
+
+```json
+[
+  {
+    "classroom": {
+      "id": 1,
+      "name": "A-201",
+      "qrCode": "ROOM_A201"
+    },
+    "devices": [
+      {
+        "id": 1,
+        "name": "Luces",
+        "type": "LIGHT",
+        "status": "ON",
+        "estimatedConsumption": 0.3
+      }
+    ]
+  }
+]
+```
+
+### Actividad Reciente
+
+```txt
+GET /dashboard/activity
+```
+
+Respuesta:
+
+```json
+{
+  "latestQrSessions": [
+    {
+      "id": 1,
+      "entryTime": "2026-05-20T00:00:00.000Z",
+      "user": {
+        "id": 1,
+        "name": "Ana",
+        "email": "ana@ecocampus.com",
+        "role": "TEACHER"
+      },
+      "classroom": {
+        "id": 1,
+        "name": "A-201"
+      }
+    }
+  ],
+  "latestDevicesModified": [
+    {
+      "id": 1,
+      "name": "Luces",
+      "type": "LIGHT",
+      "status": "ON",
+      "classroom": {
+        "id": 1,
+        "name": "A-201"
+      }
+    }
+  ]
+}
+```
+
+Nota:
+
+`Device` todavía no tiene `updatedAt`, por lo que `latestDevicesModified` se ordena por `id` descendente.
+
+## WebSocket con Socket.IO
+
+El backend expone Socket.IO en el mismo host y puerto de Nest.
+
+```txt
+http://localhost:3000
+```
+
+CORS está abierto para desarrollo.
+
+### Eventos Emitidos
+
+#### device.updated
+
+Se emite cuando se ejecuta:
+
+```txt
+PATCH /devices/:id/toggle
+```
+
+Payload:
+
+```json
+{
+  "deviceId": 1,
+  "name": "Luces",
+  "type": "LIGHT",
+  "status": "ON",
+  "classroomId": 1
+}
+```
+
+#### qr.scanned
+
+Se emite cuando se ejecuta:
+
+```txt
+POST /qr/scan
+```
+
+Payload:
+
+```json
+{
+  "classroomId": 1,
+  "classroomName": "A-201",
+  "userRole": "TEACHER"
+}
+```
+
+### Cliente Socket.IO
+
+Instala en frontend:
+
+```bash
+npm install socket.io-client
+```
+
+Ejemplo:
+
+```ts
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3000', {
+  transports: ['websocket'],
+});
+
+socket.on('connect', () => {
+  console.log('connected', socket.id);
+});
+
+socket.on('device.updated', (payload) => {
+  console.log('device.updated', payload);
+});
+
+socket.on('qr.scanned', (payload) => {
+  console.log('qr.scanned', payload);
+});
+```
+
+## Flujo de Prueba Recomendado
+
+1. Levantar PostgreSQL:
+
+```bash
+docker compose up -d
+```
+
+2. Instalar dependencias:
+
+```bash
+npm install
+```
+
+3. Configurar `.env`.
+
+4. Ejecutar migraciones:
+
+```bash
+npx prisma migrate dev
+```
+
+5. Generar Prisma Client:
+
+```bash
+npx prisma generate
+```
+
+6. Levantar backend:
+
+```bash
+npm run start:dev
+```
+
+7. Crear usuario:
+
+```txt
+POST /auth/register
+```
+
+8. Iniciar sesión:
+
+```txt
+POST /auth/login
+```
+
+9. Crear salón:
+
+```txt
+POST /classrooms
+```
+
+10. Crear dispositivos:
+
+```txt
+POST /devices
+```
+
+11. Escanear QR con token:
+
+```txt
+POST /qr/scan
+```
+
+12. Encender o apagar dispositivo:
+
+```txt
+PATCH /devices/:id/toggle
+```
+
+13. Consultar dashboard:
+
+```txt
+GET /dashboard/summary
+GET /dashboard/classrooms
+GET /dashboard/devices
+GET /dashboard/activity
+```
+
+## Probar con Postman o Thunder Client
+
+### Login
+
+```txt
+POST http://localhost:3000/auth/login
+```
+
+Body:
+
+```json
+{
+  "email": "ana@ecocampus.com",
+  "password": "123456"
+}
+```
+
+Copia `accessToken`.
+
+### Escanear QR
+
+```txt
+POST http://localhost:3000/qr/scan
+```
+
+Headers:
+
+```txt
+Authorization: Bearer JWT_TOKEN
+Content-Type: application/json
+```
+
+Body:
+
+```json
+{
+  "qrCode": "ROOM_A201"
+}
+```
+
+### Socket.IO en Postman
+
+1. Crear request de tipo `Socket.IO`.
+2. Conectar a:
+
+```txt
+http://localhost:3000
+```
+
+3. Escuchar eventos:
+
+```txt
+device.updated
+qr.scanned
+```
+
+4. Ejecutar `PATCH /devices/:id/toggle` o `POST /qr/scan` desde otra request HTTP.
+
+## Validaciones y Errores Comunes
+
+- `400 Bad Request`: DTO inválido.
+- `401 Unauthorized`: JWT ausente, inválido o expirado.
+- `404 Not Found`: salón, dispositivo o QR no encontrado.
+- `409 Conflict`: email o QR duplicado.
+- `EADDRINUSE`: el puerto ya está ocupado. Usa otro puerto con `PORT=3001 npm run start:dev`.
+- Error de conexión a DB: revisa que Docker esté corriendo y que `DATABASE_URL` coincida.
+
+## Estructura del Proyecto
+
+```txt
+src/
+  auth/
+    decorators/
+    dto/
+    guards/
+    strategies/
+    types/
+  classrooms/
+    dto/
+  dashboard/
+  devices/
+    dto/
+  prisma/
+  qr/
+    dto/
+  websocket/
+```
+
+## Estado Actual de Seguridad
+
+Implementado:
+
+- JWT.
+- Guard JWT para `/qr/scan`.
+- Password hashing con bcrypt.
+- Validación de DTOs.
+
+Pendiente recomendado:
+
+- Proteger endpoints administrativos.
+- Aplicar permisos por rol en `PATCH /devices/:id/toggle`.
+- Agregar refresh tokens.
+- Agregar rate limiting.
+- Agregar historial real de cambios de dispositivos.
+- Agregar `updatedAt` a `Device`.
+
+## Desarrollo Frontend
+
+Existe un documento con instrucciones para implementar la app móvil:
+
+```txt
+REACT_NATIVE_IMPLEMENTATION.md
+```
+
+Ese archivo describe pantallas, modelos TypeScript, endpoints, Socket.IO y criterios de aceptación para una app React Native.
+
+## Comandos Rápidos
+
+```bash
+docker compose up -d
+npm install
+npx prisma migrate dev
+npx prisma generate
+npm run start:dev
+```
+
+## Licencia
+
+Proyecto académico/hackathon. Ajustar licencia según las necesidades del equipo.
